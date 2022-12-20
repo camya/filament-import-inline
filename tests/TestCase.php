@@ -8,6 +8,7 @@ use Camya\Filament\FilamentImportInlineServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Support\SupportServiceProvider;
+use Illuminate\View\ViewServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -23,6 +24,7 @@ class TestCase extends Orchestra
         return [
             FilamentImportInlineServiceProvider::class,
             FilamentServiceProvider::class,
+            ViewServiceProvider::class,
             LivewireServiceProvider::class,
             FormsServiceProvider::class,
             SupportServiceProvider::class,
