@@ -1,4 +1,4 @@
-<img src="docs/camya-filament-import-inline-import_teaser_github.jpeg" />
+<img src="docs/camya-filament-import-inline-import_teaser_github.jpg" />
 
 # FilamentPHP Paste "Import Inline" Input - Directly paste, import, and validate machine readable data in form fields. (PHP / Laravel / Livewire)
 
@@ -14,7 +14,7 @@ Quick jump to the [Table of contents](#table-of-contents).
 
 You can watch a short demo video of the package below.
 
-[![Video](docs/camya-filament-import-inline-import_teaser_video.jpeg)](https://www.youtube.com/watch?v=UXmIFjliKik)
+[![Video](docs/camya-filament-import-inline-import_teaser_video.jpg)](https://www.youtube.com/watch?v=UXmIFjliKik)
 
 Below is an example of how to add the `ImportInlineInput` component to your FilamentPHP resource form. Read the [full documentation here](#table-of-contents).
 
@@ -80,11 +80,11 @@ class PostResource extends Resource
 
 The output looks like this: (Watch **[&raquo; Demo Video &laquo;](https://www.youtube.com/watch?v=5u1Nepm2NiI)**)
 
-<img src="docs/examples/camya-filament-import-inline-import-01.jpeg" width="600" />
+<img src="docs/examples/camya-filament-import-inline-import-01.jpg" width="600" />
 
-<img src="docs/examples/camya-filament-import-inline-import-02.jpeg" width="600" />
+<img src="docs/examples/camya-filament-import-inline-import-02.jpg" width="600" />
 
-<img src="docs/examples/camya-filament-import-inline-import-03.jpeg" width="600" />
+<img src="docs/examples/camya-filament-import-inline-import-03.jpg" width="600" />
 
 ## Features
 
