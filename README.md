@@ -8,9 +8,11 @@ This package for [FilamentPHP](https://filamentphp.com/) adds the form component
 
 You can validate imported data using the standard [Laravel Validation Rules](https://laravel.com/docs/9.x/validation#available-validation-rules).
 
-The plugin comes with two handy importers, [jsonString()](#json-importer---importjsonstring) and [csvString()](#csv-importer-for-comma-separated-values), but you can also just [write and use your own importer](#write-your-own-importer)
+The plugin comes with two handy importers, [jsonString()](#json-importer---importjsonstring) and [csvString()](#csv-importer-for-comma-separated-values), but you can also just [write and use your own importer](#write-your-own-importer).
 
-You can watch a short demo video of the packages below.
+Quick jump to the [Table of contents](#table-of-contents).
+
+You can watch a short demo video of the package below.
 
 [![Video](docs/camya-filament-import-inline-import_teaser_video.jpeg)](https://www.youtube.com/watch?v=UXmIFjliKik)
 
@@ -113,6 +115,7 @@ Filament [plugin page](https://filamentphp.com/plugins/import-inline-validate-fo
         - [JSON importer](#json-importer---importjsonstring)
         - [CSV importer (for Comma Separated Values)](#csv-importer-for-comma-separated-values)
         - [Write your own importer](#write-your-own-importer)
+        - [How to show a form error, if the import fails?](#how-to-show-a-form-error-if-the-import-fails)
     - [Laravel Validation Rules](#laravel-validation-rules)
     - [**All available parameters**](#all-available-parameters)
 - [Changelog](#changelog)
@@ -155,7 +158,7 @@ our [GitHub discussions](https://github.com/camya/filament-import-inline/discuss
 
 ### Import and validate data - step-by-step guide.
 
-The data passed by this plugin triggers Filament's `afterStateUpdated()` method and is contained in the `$state` parameter.
+The user input text is sent to the component's `afterStateUpdated()` method and is contained in the `$state` parameter.
 
 **Explanation of the code below:**
 
@@ -220,7 +223,7 @@ You can read the documentation for [CSV import with csvString()](#csv-importer-f
 2. We pass only the **first row** of the result to the validation.
 3. We set rules for the `tags`, but also for the `tags.*` to validate the array elements.
 4. We set messages for `tags` and the `tags.*`.
-5. Finally, we `$set()` the `$dataValidated['tags']` array into the target form field in your filament resource. (Here it is the tags field).
+5. Finally, we `$set()` the `$dataValidated['tags']` array into the target form field in the filament resource. (Here it is the tags field).
 
 ```php
 ImportInlineInput::make('Tag Importer')
@@ -293,10 +296,16 @@ Use this method to import JSON data like:
 }
 ```
 
-This generates the array:
+```php
+$output = Import::jsonString(
+    data: $input,
+);
+```
+
+This generates the following array structure:
 
 ```php
-$data = [
+[
     'title' => 'Lorem Ipsum',
     'slug' => 'lorem-ipsum',
     'tags' => [
@@ -306,20 +315,6 @@ $data = [
         3 => 4,
     ],
 ]
-```
-
-### Show a Form Error, if the import fails?
-
-The build in importers throw an `\Exception` on failure. Add a try/catch block around them and use the `$validator->setValidationError()` method of the $component to set the form errors.
-
-You can use the the same mechanism, if you [write your own importer](#write-your-own-importer).
-
-```php
-try {
-    $dataInput = Import::jsonString($importData);
-} catch (\Exception $e) {
-    $validator->setValidationError($e->getMessage());
-}
 ```
 
 ### CSV importer (for Comma Separated Values)
@@ -356,10 +351,18 @@ Use this method to import comma separated CSV data as below, e.g. to populate ta
 "World", "5", "6", "65"
 ```
 
-This generates the array:
+```php
+$output = Import::csvString(
+    data: $input,
+    csvPerRow: 4,
+    hasHeader: true,
+);
+```
+
+This generates the following array structure:
 
 ```php
-$data = [
+[
     'header' => [
         0 => 'Title',
         1 => 'TagID1',
@@ -381,6 +384,59 @@ $data = [
         ],
     ],
 ]
+```
+
+If you set `hasHeader: false`, it parses all lines as rows. 
+
+```php
+$output = Import::csvString(
+    data: $input,
+    csvPerRow: 4,
+    hasHeader: false,
+);
+```
+
+It generates the following array structure:
+
+```php
+[
+    'header' => []
+    'rows' => [
+        [
+            0 => 'Title',
+            1 => 'TagID1',
+            2 => 'TagID2',
+            4 => 'CategoryID',
+        ],
+        [
+            0 => 'Hello',
+            1 => '1',
+            2 => '2',
+            4 => '21',
+        ],
+        [
+            0 => 'World',
+            1 => '5',
+            2 => '6',
+            4 => '65',
+        ],
+    ],
+]
+```
+```
+
+### How to show a form error, if the import fails?
+
+The build in importers throw an `\Exception` on failure. Add a try/catch block around them and use the `$validator->setValidationError()` method of the $component to set the form errors.
+
+You can use the the same mechanism, if you [write your own importer](#write-your-own-importer).
+
+```php
+try {
+    $dataInput = Import::jsonString($importData);
+} catch (\Exception $e) {
+    $validator->setValidationError($e->getMessage());
+}
 ```
 
 ### Write your own importer
