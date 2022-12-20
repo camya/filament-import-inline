@@ -1,0 +1,88 @@
+{
+    "name": "camya/filament-import-inline",
+    "description": "ImportInlineInput - Directly paste, import, and validate machine readable data in form fields. (PHP / Laravel / Livewire)",
+    "keywords": [
+        "framework",
+        "laravel",
+        "filament",
+        "slug",
+        "permalink",
+        "livewire",
+        "alpinejs",
+        "tailwindcss"
+    ],
+    "homepage": "https://github.com/camya/filament-import-inline",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Scheibel",
+            "email": "contact@camya.com",
+            "role": "Developer",
+            "homepage": "https://www.camya.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "filament/filament": "^2.16",
+        "illuminate/contracts": "^9.0",
+        "spatie/laravel-package-tools": "^1.13.0",
+        "spatie/ray": "^1.36"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.0",
+        "nunomaduro/collision": "^6.0",
+        "nunomaduro/larastan": "^2.0.1",
+        "orchestra/testbench": "^7.0",
+        "pestphp/pest": "^1.21",
+        "pestphp/pest-plugin-laravel": "^1.1",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^9.5",
+        "roave/security-advisories": "dev-latest",
+        "spatie/x-ray": "^1.1"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Camya\\Filament\\": "src",
+            "Camya\\Laravel\\": "src_laravel"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Camya\\Filament\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "preflight": "vendor/bin/pint; npm run build; vendor/bin/phpstan analyse; vendor/bin/x-ray . --ignore './build'; vendor/bin/pest",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Camya\\Filament\\FilamentImportInlineServiceProvider"
+            ],
+            "aliases": {
+                "Import": "Camya\\Laravel\\Importer\\ImportManager",
+                "ComponentValidator": "Camya\\Filament\\Facades\\ComponentValidator"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

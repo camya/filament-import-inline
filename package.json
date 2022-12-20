@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "description": "ImportInlineInput - Easy Import Input for the FilamentPHP Form Builder (PHP / Laravel / Livewire)",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./resources/css/filament-import-inline.css -o ./resources/dist/filament-import-inline.css --postcss --watch",
+    "build": "npx tailwindcss -i ./resources/css/filament-import-inline.css -o ./resources/dist/filament-import-inline.css --postcss --minify && npm run purge",
+    "purge": "filament-purge -i ./resources/dist/filament-import-inline.css -o ./resources/dist/filament-import-inline.css"
+  },
+  "author": "Andreas Scheibel",
+  "license": "MIT",
+  "devDependencies": {
+    "@awcodes/filament-plugin-purge": "^1.0.1",
+    "autoprefixer": "^10.4.7",
+    "postcss": "^8.4.14",
+    "tailwindcss": "^3.1.2"
+  }
+}
