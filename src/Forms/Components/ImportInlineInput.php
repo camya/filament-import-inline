@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class ImportInlineInput extends TextInput
 {
-    protected string $view = 'filament-import-inline::forms.fields.import-inline-input';
+    protected string $view = 'filament-import-inline::forms.components.import-inline-input';
 
     protected null|string|Closure $statusMessageHtml = null;
 
