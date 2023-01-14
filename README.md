@@ -18,6 +18,18 @@ You can watch a short demo video of the package below.
 
 Below is an example of how to add the `ImportInlineInput` component to your FilamentPHP resource form. Read the [full documentation here](#table-of-contents).
 
+The JSON data for the example looks like this. Import/paste this data into you newly added component form field.
+
+```json
+{
+    "title": "The title of this post!",
+    "slug": "title-of-post",
+    "content": "Lorem ipsum."
+}
+```
+
+Implementation
+
 ```php
 use Camya\Filament\Forms\Components\ImportInlineInput;
 use Camya\Laravel\Importer\Facades\Import;
@@ -170,6 +182,15 @@ The user input text is sent to the component's `afterStateUpdated()` method and 
     - Valid data: If valid, you can set any form field using Filament's `$set('title', $validatedData['title'])` closure method.
 5. Use the `$component->statusMessage()` method of the component to set a success message below the form. (You can use Filament's notification system with `Filament::notify('success', 'Data imported');`)
 
+The JSON data for the example looks like this. Import/paste this data into you newly added component form field.
+
+```json
+{
+    "title": "How to develop Filament plugins!"
+}
+```
+
+Implementation
 
 ```php
 ImportInlineInput::make('Import')
@@ -213,10 +234,6 @@ ImportInlineInput::make('Import')
 
 ### How to import & validate array data? Example: Tags, Category IDs
 
-In this import example for CSV data (comma separated values) the text input looks like this:
-
-`1,2,3`
-
 You can read the documentation for [CSV import with csvString()](#csv-importer-for-comma-separated-values) here.
 
 1. We import the CSV data with the method `Import::csvString()`. We set the min/max values per line to 3 to avoid wrong input using `csvPerRow:`. [All parameters & return format explained here.](#csv-importer-for-comma-separated-values)
@@ -224,6 +241,14 @@ You can read the documentation for [CSV import with csvString()](#csv-importer-f
 3. We set rules for the `tags`, but also for the `tags.*` to validate the array elements.
 4. We set messages for `tags` and the `tags.*`.
 5. Finally, we `$set()` the `$dataValidated['tags']` array into the target form field in the filament resource. (Here it is the tags field).
+
+The CSV data for the example looks like this. Import/paste this data into you newly added component form field.
+
+```
+1,2,3
+```
+
+Implementation
 
 ```php
 ImportInlineInput::make('Tag Importer')
@@ -276,6 +301,8 @@ ImportInlineInput::make('Tag Importer')
 
 ### JSON importer - Import::jsonString()
 
+This package provides a simple JSON importer whose main purpose is to set some necessary default values for the underlying PHP function. Additionally, it throws an ImportException in case of an error.
+
 ```php
 \Camya\Laravel\Importer\Facades\Import::jsonString($input);
 
@@ -285,6 +312,8 @@ jsonString(
 ```
 
 - `input:` String input
+
+**Input data**
 
 Use this method to import JSON data like:
 
@@ -296,11 +325,15 @@ Use this method to import JSON data like:
 }
 ```
 
+**Implementation**
+
 ```php
 $output = Import::jsonString(
     data: $input,
 );
 ```
+
+**Output**
 
 This generates the following array structure:
 
@@ -315,6 +348,36 @@ This generates the following array structure:
         3 => 4,
     ],
 ]
+```
+
+**Handle ImportException**
+
+If the import fails, one of the following ImportExceptions is thrown. Use the error message or code constants in your implementation.
+
+```php
+// Attempt to import JSON from the specified state.
+try {
+    $importedData = Import::jsonString($state);
+} catch (\Exception $e) {
+    $validator->setValidationError($e->getMessage());
+}
+```
+
+**Available exception codes:**
+
+The validation error message is "Invalid JSON data" for all exceptions (`$e->getMessage()`).
+
+You can use the provided error code to distinguish the errors and set your own message. (`$e->getCode()`)
+
+```php
+// Incorrect input format, not a valid JSON string.
+Import::JSON_ERROR_INVALID_INPUT
+
+// Valid JSON, but result is not an array.
+// If the input is an integer, it's technically a valid JSON object.
+// We throw an exception nevertheless, because importing integers
+// is not the use case of the importJSON method.
+Import::JSON_ERROR_INVALID_RESULT
 ```
 
 ### CSV importer (for Comma Separated Values)
@@ -343,6 +406,8 @@ csvString(
 - `escape:` Escape character.
 - `csvPerRowAutodetect:` Automatic detection of the number of values per row (set from first row). If a following row has more or less columns, an exception is triggered.
 
+**Input data**
+
 Use this method to import comma separated CSV data as below, e.g. to populate tag IDs in **repeat** fields. Set hasHeader:
 
 ```
@@ -351,6 +416,8 @@ Use this method to import comma separated CSV data as below, e.g. to populate ta
 "World", "5", "6", "65"
 ```
 
+**Implementation**
+
 ```php
 $output = Import::csvString(
     data: $input,
@@ -358,6 +425,8 @@ $output = Import::csvString(
     hasHeader: true,
 );
 ```
+
+**Output**
 
 This generates the following array structure:
 
@@ -386,6 +455,8 @@ This generates the following array structure:
 ]
 ```
 
+**Implementation with "hasHeader"**
+
 If you set `hasHeader: false`, it parses all lines as rows. 
 
 ```php
@@ -395,6 +466,8 @@ $output = Import::csvString(
     hasHeader: false,
 );
 ```
+
+**Output with "hasHeader"**
 
 It generates the following array structure:
 
@@ -423,6 +496,32 @@ It generates the following array structure:
     ],
 ]
 ```
+
+**Handle ImportException**
+
+If the import fails, one of the following ImportExceptions is thrown. Use the error message or code constants in your implementation.
+
+```php
+// Attempt to import CSV from the specified state.
+try {
+    $importedData = Import::csvString($state);
+} catch (\Exception $e) {
+    $validator->setValidationError($e->getMessage());
+}
+```
+
+**Available exception codes:**
+
+The validation error message is "Invalid JSON data" for all exceptions (`$e->getMessage()`).
+
+You can use the provided error code to distinguish the errors and set your own message. (`$e->getCode()`)
+
+```php
+// Empty input data
+Import::CSV_ERROR_INVALID_INPUT
+
+// Value count does not matche the value count set in $valuePerRow.
+Import::CSV_ERROR_INVALID_CVS_PER_ROW_COUNT
 ```
 
 ### How to show a form error, if the import fails?
@@ -437,6 +536,33 @@ try {
 } catch (\Exception $e) {
     $validator->setValidationError($e->getMessage());
 }
+```
+
+You can use a provided error code to distinguish the errors and set your own message. (`$e->getCode()`)
+
+**Available error codes are:**
+
+JSON importer:
+
+```php
+// Incorrect input format, not a valid JSON string.
+Import::JSON_ERROR_INVALID_INPUT
+
+// Valid JSON, but result is not an array.
+// If the input is an integer, it's technically a valid JSON object.
+// We throw an exception nevertheless, because importing integers
+// is not the use case of the importJSON method.
+Import::JSON_ERROR_INVALID_RESULT
+```
+
+CSV importer:
+
+```php
+// Empty input data
+Import::CSV_ERROR_INVALID_INPUT
+
+// Value count does not matche the value count set in $valuePerRow.
+Import::CSV_ERROR_INVALID_CVS_PER_ROW_COUNT
 ```
 
 ### Write your own importer
